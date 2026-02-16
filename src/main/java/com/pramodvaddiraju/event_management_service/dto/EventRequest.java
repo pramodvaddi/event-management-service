@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 
 public class EventRequest {
 
-
     @NotBlank(message = "title cannot be blank")
     private String title;
     @NotBlank(message = "description cannot be blank")
@@ -17,8 +16,8 @@ public class EventRequest {
     private String location;
     @NotNull(message = "date and time cannot be blank")
     private LocalDateTime eventDate;
-    @NotBlank(message = "email cannot be blank")
     @Email(message = "Valid email must be provided")
+    @NotBlank(message = "email cannot be null")
     private String organiserEmail;
 
     public EventRequest(){

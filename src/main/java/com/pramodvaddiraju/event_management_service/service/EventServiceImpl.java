@@ -4,6 +4,7 @@ import com.pramodvaddiraju.event_management_service.dto.EventRequest;
 import com.pramodvaddiraju.event_management_service.dto.EventResponse;
 import com.pramodvaddiraju.event_management_service.entity.Event;
 import com.pramodvaddiraju.event_management_service.exception.ResourceNotFoundExcpetion;
+import com.pramodvaddiraju.event_management_service.notifications.EmailService;
 import com.pramodvaddiraju.event_management_service.repository.EventRepository;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -19,11 +20,13 @@ public class EventServiceImpl implements EventService{
 
     private ModelMapper modelMapper;
     private EventRepository eventRepository;
+    private EmailService emailService;
     private static final Logger log = LoggerFactory.getLogger(EventServiceImpl.class);
 
-    public EventServiceImpl(ModelMapper modelMapper, EventRepository eventRepository){
+    public EventServiceImpl(ModelMapper modelMapper, EventRepository eventRepository, EmailService emailService){
         this.eventRepository = eventRepository;
         this.modelMapper = modelMapper;
+        this.emailService = emailService;
     }
 
     @Override
@@ -32,6 +35,7 @@ public class EventServiceImpl implements EventService{
         log.info("Received create request with id: {}", event.getId());
         event.setCreatedAt(LocalDateTime.now());
         Event created = eventRepository.save(event);
+        emailService.sendEventCreatedMail(created.getOrganiserEmail(), created.getTitle());
         log.info("Event Created with id: {}", event.getId());
 
         return modelMapper.map(created, EventResponse.class);
